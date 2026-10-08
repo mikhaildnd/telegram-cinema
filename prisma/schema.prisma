@@ -20,8 +20,8 @@ model Media {
   slug              String    @unique
   title             String
   type              MediaType
-  posterUrl         String
-  description       String
+  posterUrl         String?
+  description       String?
   telegramMessageId Int?
 
   seasons Season[]
