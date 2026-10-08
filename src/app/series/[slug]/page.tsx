@@ -2,18 +2,12 @@ import Image from 'next/image';
 import { Suspense } from 'react';
 import Link from 'next/link';
 
-import { series } from '@/data/series';
+import { getSeriesBySlug } from '@/services/media.service';
 
-type SeriesPageProps = {
+interface SeriesPageProps {
     params: Promise<{
         slug: string;
     }>;
-};
-
-export function generateStaticParams() {
-    return series.map((item) => ({
-        slug: item.slug,
-    }));
 }
 
 export default function SeriesPage({ params }: SeriesPageProps) {
@@ -27,7 +21,7 @@ export default function SeriesPage({ params }: SeriesPageProps) {
 async function SeriesContent({ params }: SeriesPageProps) {
     const { slug } = await params;
 
-    const item = series.find((series) => series.slug === slug);
+    const item = await getSeriesBySlug(slug);
 
     if (!item) {
         return <div>Сериал не найден</div>;

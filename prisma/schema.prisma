@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum MediaType {
+  MOVIE
+  SERIES
+}
+
+model Media {
+  id                String    @id @default(cuid())
+  slug              String    @unique
+  title             String
+  type              MediaType
+  posterUrl         String
+  description       String
+  telegramMessageId Int?
+
+  seasons Season[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Season {
+  id      String @id @default(cuid())
+  number  Int
+  mediaId String
+
+  media    Media     @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  episodes Episode[]
+
+  @@unique([mediaId, number])
+}
+
+model Episode {
+  id                String @id @default(cuid())
+  number            Int
+  title             String
+  telegramMessageId Int?
+
+  seasonId String
+  season   Season @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+
+  @@unique([seasonId, number])
+}

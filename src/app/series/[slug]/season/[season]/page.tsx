@@ -2,23 +2,14 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 
 import { getTelegramMessageUrl } from '@/data/telegram';
-import { series } from '@/data/series';
+import { getSeasonBySlug } from '@/services/media.service';
 
-export function generateStaticParams() {
-    return series.flatMap((item) =>
-        item.seasons.map((season) => ({
-            slug: item.slug,
-            season: String(season.number),
-        })),
-    );
-}
-
-type SeasonPageProps = {
+interface SeasonPageProps {
     params: Promise<{
         slug: string;
         season: string;
     }>;
-};
+}
 
 export default function SeasonPage({ params }: SeasonPageProps) {
     return (
@@ -30,25 +21,21 @@ export default function SeasonPage({ params }: SeasonPageProps) {
 
 async function SeasonContent({ params }: SeasonPageProps) {
     const { slug, season: seasonParam } = await params;
-
-    const item = series.find((series) => series.slug === slug);
     const seasonNumber = Number(seasonParam);
 
-    const season = item?.seasons.find(
-        (season) => season.number === seasonNumber,
-    );
+    const season = await getSeasonBySlug(slug, seasonNumber);
 
-    if (!item || !season) {
+    if (!season) {
         return <div>Сезон не найден</div>;
     }
 
     return (
         <main className="mx-auto w-full max-w-300 px-3 py-4">
             <Link
-                href={`/series/${item.slug}`}
+                href={`/series/${season.media.slug}`}
                 className="text-sm text-zinc-400 hover:text-white"
             >
-                ← {item.title}
+                ← {season.media.title}
             </Link>
 
             <h1 className="mt-6 text-2xl font-bold">Сезон {season.number}</h1>

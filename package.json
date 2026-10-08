@@ -9,12 +9,15 @@
         "lint": "eslint",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
-        "bot:dev": "node --env-file=.env.local --import=tsx src/bot/index.ts"
+        "bot:dev": "node --env-file=.env.local --import=tsx src/bot/index.ts",
+        "db:seed": "tsx prisma/seed.ts"
     },
     "dependencies": {
+        "@prisma/adapter-pg": "^7.10.0",
         "@prisma/client": "7.10.0",
         "grammy": "^1.46.0",
         "next": "16.4.0",
+        "pg": "^8.23.1",
         "prisma": "7.10.0",
         "react": "19.3.0",
         "react-dom": "19.3.0"
